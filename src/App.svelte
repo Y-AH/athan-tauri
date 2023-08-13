@@ -1,8 +1,15 @@
 <script>
   import { Coordinates, CalculationMethod, PrayerTimes } from "adhan";
+  import {
+    isPermissionGranted,
+    requestPermission,
+    sendNotification,
+  } from "@tauri-apps/api/notification";
+  import { onDestroy, onMount } from "svelte";
 
   const coordinates = new Coordinates(29.3117, 47.4818);
   const calculationMethod = CalculationMethod.Kuwait();
+  let askedForPermission = false;
   let date = new Date();
   $: prayerTimes = new PrayerTimes(coordinates, date, calculationMethod);
   $: nextPrayer = prayerTimes.nextPrayer(new Date());
@@ -15,9 +22,19 @@
         ).timeForPrayer("fajr")
       : prayerTimes.timeForPrayer(nextPrayer);
 
-  const handle = setInterval(() => {
-    date = new Date();
-  }, 500);
+  $: {
+    nextPrayerTime;
+    const now = new Date();
+    const currentPrayer = prayerTimes.currentPrayer(now);
+    if (currentPrayer !== "none") {
+      sendRandomNotification(currentPrayer);
+    }
+  }
+
+
+  let clockInterval;
+
+  let notificationInterval;
 
   function msToTime(ms) {
     const seconds = Math.floor(ms / 1000);
@@ -44,6 +61,45 @@
 
     return formattedTime;
   }
+
+  async function checkPermission() {
+    const isGranted = await !isPermissionGranted();
+    console.log({ askedForPermission, isGranted });
+    if (!askedForPermission && !isGranted) {
+      askedForPermission = true;
+      const result = await requestPermission();
+      console.log(result);
+    }
+  }
+
+  /**
+   *
+   * @param {string} prayer
+   */
+  async function sendRandomNotification(prayer) {
+    await sendNotification({
+      title: `🕌 It's ${prayer} 🕋 time.`,
+      body: "🚶‍♂️ Get up, 🛑 take a break, and 🙏 pray.",
+    });
+  }
+
+  onMount(() => {
+    checkPermission();
+    clockInterval = setInterval(() => {
+      date = new Date();
+    }, 500);
+    notificationInterval = setInterval(() => {}, 60 * 1000);
+  });
+
+  onDestroy(() => {
+    if (notificationInterval) {
+      clearInterval(notificationInterval);
+    }
+
+    if (clockInterval) {
+      clearInterval(clockInterval);
+    }
+  });
 </script>
 
 <main>
