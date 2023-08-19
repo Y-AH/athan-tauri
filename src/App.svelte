@@ -46,18 +46,41 @@
   }
 </script>
 
-<main>
+<main class="prayer-panel">
   <div>
-    Time until next prayer {msToTime(nextPrayerTime.getTime() - Date.now())}
+    <div class="prayer">
+      <span>Fajir:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.fajr)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
+    <div class="prayer">
+      <span>Sunrise:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.sunrise)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
+    <div class="prayer">
+      <span>Duhr:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.dhuhr)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
+    <div class="prayer">
+      <span>Asr:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.asr)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
+    <div class="prayer">
+      <span>Maghrib:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.maghrib)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
+    <div class="prayer">
+      <span>Isha:</span>
+      <span class="prayer-time">{formatTimeWithAMPM(prayerTimes.isha)}</span>
+      <!-- <button class="pause-button" /> -->
+    </div>
   </div>
-
-  <div>
-    <div>Fajir: {formatTimeWithAMPM(prayerTimes.fajr)}</div>
-    <div>Sunrise: {formatTimeWithAMPM(prayerTimes.sunrise)}</div>
-    <div>Duhr: {formatTimeWithAMPM(prayerTimes.dhuhr)}</div>
-    <div>Asr: {formatTimeWithAMPM(prayerTimes.asr)}</div>
-    <div>Maghrib: {formatTimeWithAMPM(prayerTimes.maghrib)}</div>
-    <div>Isha: {formatTimeWithAMPM(prayerTimes.isha)}</div>
+  <div class="countdown">
+    Time until next prayer {msToTime(nextPrayerTime.getTime() - Date.now())}
   </div>
 </main>
 
@@ -76,5 +99,103 @@
   }
   .read-the-docs {
     color: #888;
+  }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.3s;
+  }
+
+  .prayer-panel {
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    transition: background-color 0.3s;
+  }
+
+  .prayer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .prayer > :first-child {
+    justify-self: start; /* Aligns to the left of its cell */
+  }
+
+  /* .prayer > :nth-child(2) {
+    justify-self: center;
+  } */
+
+  .prayer > :last-child {
+    justify-self: end; /* Aligns to the right of its cell */
+    margin-bottom: 0;
+  }
+
+  .prayer-time {
+    color: #555;
+  }
+
+  .pause-button {
+    background-color: #ddd;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background-color 0.3s;
+  }
+
+  .pause-button::before {
+    content: "||";
+    color: #555;
+  }
+
+  .countdown {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  /* Light theme styles (default) */
+  body {
+    background-color: #f4f4f4;
+  }
+
+  .prayer-panel {
+    background-color: #fff;
+  }
+
+  /* Dark theme styles */
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #1a1a1a;
+    }
+
+    .prayer-panel {
+      background-color: #333;
+    }
+
+    .prayer-time,
+    .countdown {
+      color: #ccc;
+    }
+
+    .pause-button {
+      background-color: #555;
+    }
+
+    .pause-button::before {
+      color: #ccc;
+    }
   }
 </style>
