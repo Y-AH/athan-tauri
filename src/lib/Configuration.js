@@ -1,3 +1,4 @@
+// Configuration.js
 // @ts-ignore
 import { cities } from "./cities";
 
@@ -19,7 +20,28 @@ const DEFAULTS = Object.freeze({
     }
 });
 
+
+export const CalculationMethodList = [
+    'MuslimWorldLeague',
+    'Egyptian',
+    'Karachi',
+    'UmmAlQura',
+    'Dubai',
+    'MoonsightingCommittee',
+    'NorthAmerica',
+    'Kuwait',
+    'Qatar',
+    'Singapore',
+    'Tehran',
+    'Turkey'
+];
+
 export class Configuration {
+
+    /**
+     * @type {{ country?: string, city?: string, latitude?: number, longitude?: number }}
+     */
+    #location = {};
 
 
     constructor(...args) {
@@ -40,12 +62,12 @@ export class Configuration {
             city = foundCity.name;
         }
         const { latitude = 0, longitude = 0 } = foundCity ?? {};
-        this._location = { country, city, latitude, longitude };
+        this.#location = { country, city, latitude, longitude };
     }
-    
+
 
     get location() {
-        return this._location;
+        return this.#location;
     }
 
     init(
@@ -69,4 +91,13 @@ export class Configuration {
         };
     }
 
+    toPlainObject() {
+        return {
+            version: this.version,
+            title: this.title,
+            calculation_method: this.calculation_method,
+            location: { ...this.location },
+            prayer_offset: { ...this.prayer_offset },
+        };
+    }
 }

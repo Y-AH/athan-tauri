@@ -44,7 +44,7 @@ export async function saveConfiguration(config) {
     if (!(await fs.exists(dataDir))) {
         await createDirectoryIfDoesntExist(dataDir);
     }
-    await fs.writeTextFile(configPath, stringify(config));
+    await fs.writeTextFile(configPath, stringify(config.toPlainObject()));
 }
 
 /**
