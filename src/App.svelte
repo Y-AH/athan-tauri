@@ -6,14 +6,12 @@
     sendNotification,
   } from "@tauri-apps/api/notification";
   import { onDestroy, onMount } from "svelte";
-  import {
-    loadConfiguration,
-    saveConfiguration,
-  } from "./lib/ConfigurationService";
-  import { debounce } from "./lib/utils";
+  import { loadConfiguration } from "./lib/ConfigurationService";
   import PrayerTimesPage from "./pages/PrayerTimesPage.svelte";
   import ConfigurationPage from "./pages/ConfigurationPage.svelte";
-  import { configStore } from './lib/store';
+  import { configStore } from "./lib/store";
+  import { slide } from "svelte/transition";
+
   /**
    * Flag to track if notification permission has been checked.
    * @type {boolean}
@@ -35,7 +33,6 @@
    * @type {import('svelte/store').Unsubscriber}
    */
   let configSub = null;
-
 
   let selectedLocation = { country: "DefaultCountry", city: "DefaultCity" };
 
@@ -174,19 +171,83 @@
     loadConfiguration().then((configuration) => {
       configStore.set(configuration);
     });
-    configSub = configStore.subscribe(value => {
-      config = value; 
+    configSub = configStore.subscribe((value) => {
+      config = value;
     });
   });
+
+  function openConfiguration() {
+    openPage = "Configurations";
+  }
+
+  function openPrayerTimes() {
+    openPage = "PrayerTimes";
+  }
 </script>
 
+<div class="nav-buttons">
+  <button
+    class:active={openPage === "Configurations"}
+    on:click={openConfiguration}>Configurations</button
+  >
+  <button class:active={openPage === "PrayerTimes"} on:click={openPrayerTimes}
+    >Prayer Times</button
+  >
+</div>
 {#if openPage === "Configurations"}
-  <ConfigurationPage />
+  <div in:slide={{ duration: 500 }} out:slide={{ duration: 500 }}>
+    <ConfigurationPage />
+  </div>
 {:else if prayerTimes}
-  <PrayerTimesPage
-    {currentDate}
-    {prayerTimes}
-    {calcualtionParameters}
-    {userCoordinates}
-  />
+  <div in:slide={{ duration: 500 }} out:slide={{ duration: 500 }}>
+    <PrayerTimesPage
+      {currentDate}
+      {prayerTimes}
+      {calcualtionParameters}
+      {userCoordinates}
+    />
+  </div>
 {/if}
+
+<style>
+  .nav-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    border-color: transparent;
+  }
+
+  .nav-buttons > button.active {
+    background-color: #646cff;
+    color: #f4f4f4;
+    border-color: transparent;
+  }
+
+  .nav-buttons > button:not(.active):hover {
+    background-color: #535bf2;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .nav-buttons > button.active {
+      background-color: #747bff;
+      color: #213547;
+    }
+
+    .nav-buttons > button:not(.active):hover {
+      background-color: #626cd2;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .nav-buttons > button.active {
+      background-color: #535bf2;
+      color: #f4f4f4;
+    }
+
+    .nav-buttons > button:not(.active):hover {
+      background-color: #424bc1;
+    }
+  }
+</style>

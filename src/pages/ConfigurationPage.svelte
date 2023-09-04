@@ -4,10 +4,12 @@
     import { configStore } from "../lib/store";
     import { saveConfiguration } from "../lib/ConfigurationService";
     import { onDestroy, onMount } from "svelte";
+    import { fade } from "svelte/transition";
     import { CalculationMethodList } from "../lib/Configuration";
 
     let config = null;
     let configUnsub = null;
+    let showSnackbar = false;
 
     let selectedLocation = { country: "Kuwait", city: "Kuwait City" };
 
@@ -54,6 +56,18 @@
     function updateStore(updatedConfig) {
         configStore.set(updatedConfig);
     }
+
+    async function saveConfigAndNotify() {
+        try {
+            await saveConfiguration(config);
+            showSnackbar = true;
+            setTimeout(() => {
+                showSnackbar = false;
+            }, 3000); // Hide the snackbar after 3 seconds}
+        } catch (e) {
+            console.error(e);
+        }
+    }
 </script>
 
 <main class="panel">
@@ -96,12 +110,62 @@
                 {/each}
             </select>
         </div>
+    {:else}
+        <div>
+            <label for="country-select">Country:</label>
+            <select id="country-select" />
+        </div>
+        <div>
+            <label for="city-select">City:</label>
+            <select id="city-select" />
+        </div>
+        <div>
+            <label for="calculation-method-select">Calculation Method:</label>
+            <select id="calculation-method-select" />
+        </div>
     {/if}
+
     <div>
-        <button
-            on:click={() => {
-                saveConfiguration(config);
-            }}>Save</button
-        >
+        <button on:click={saveConfigAndNotify}>Save</button>
     </div>
+
+    <!-- Snackbar Component -->
+    {#if showSnackbar}
+        <div class="snackbar" transition:fade={{ duration: 500 }}>
+            Configurations Saved!
+        </div>
+    {/if}
 </main>
+
+<style>
+    .snackbar {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-family: "Consolas", "Noto Sans", monospace;
+        transition: background-color 0.3s, color 0.3s;
+
+        /* Default color scheme for light mode (can be adjusted as necessary) */
+        background-color: #333;
+        color: #ccc;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .snackbar {
+            background-color: #242424;
+            color: rgba(255, 255, 255, 0.87);
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .snackbar {
+            background-color: #555;
+            color: #ccc;
+        }
+    }
+</style>
