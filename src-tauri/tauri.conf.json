@@ -15,6 +15,21 @@
       "all": false,
       "notification": {
         "all": true
+      },
+      "fs": {
+        "all": true,
+        "scope": [
+          "$DOCUMENT/**",
+          "$DOCUMENT/*",
+          "$DOCUMENT",
+          "$APPDATA/**",
+          "$APPDATA/*",
+          "$APPDATA/",
+          "$APPDATA"
+        ]
+      },
+      "path": {
+        "all": true
       }
     },
     "bundle": {

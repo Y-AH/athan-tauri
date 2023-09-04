@@ -1,0 +1,17 @@
+version = '1.0.0'
+title = 'Athan App'
+calculation_method = "Kuwait"
+
+
+[location]
+country = "Jordan"
+city = "Amman"
+
+
+[prayer_offset]
+fajr = 0
+sunrise = 0
+dhuhr = 0
+asr = 0
+maghrib = 0
+isha = 0

@@ -11,16 +11,13 @@
     sendNotification,
   } from "@tauri-apps/api/notification";
   import { onDestroy, onMount } from "svelte";
-  /**
-   * User's coordinates for prayer time calculation.
-   * @type {Coordinates}
-   */
-  const userCoordinates = new Coordinates(29.3117, 47.4818);
-  /**
-   * Calculation method for prayer times.
-   * @type {CalculationParameters}
-   */
-  const calculationMethod = CalculationMethod.Kuwait();
+  import {
+    loadConfiguration,
+    saveConfiguration,
+  } from "./lib/ConfigurationService";
+  import { countries } from "./lib/countries";
+  import { cities } from "./lib/cities";
+  import { debounce } from "./lib/utils";
   /**
    * Flag to track if notification permission has been checked.
    * @type {boolean}
@@ -31,6 +28,35 @@
    * @type {string}
    */
   let currentDayStr = formatDate();
+
+  /**
+   * @type {import('./lib/Configuration').Configuration | null}
+   */
+  let config = null;
+
+  let selectedLocation = { country: "DefaultCountry", city: "DefaultCity" };
+
+  $: if (config && config.location) {
+    selectedLocation = { ...config.location };
+  }
+
+  function handleLocationChange() {
+    if (config) {
+      config.location = selectedLocation;
+    }
+  }
+
+  // /**
+  //  * User's coordinates for prayer time calculation.
+  //  * @type {Coordinates}
+  //  */
+  // const userCoordinates = new Coordinates(, );
+
+  //  /**
+  //  * Calculation method for prayer times.
+  //  * @type {CalculationParameters}
+  //  */
+  // const calculationMethod = CalculationMethod.Kuwait();
 
   /**
    * Tracks which prayer notifications have been sent.
@@ -51,10 +77,17 @@
    */
   let currentDate = new Date();
 
+  $: userCoordinates = new Coordinates(
+    config?.location?.latitude ?? 0,
+    config?.location?.longitude ?? 0
+  );
+  $: calcualtionParameters =
+    CalculationMethod[config?.calculation_method ?? "Kuwait"]();
+
   $: prayerTimes = new PrayerTimes(
     userCoordinates,
     currentDate,
-    calculationMethod
+    calcualtionParameters
   );
   $: upcomingPrayer = prayerTimes.nextPrayer(new Date());
   $: nextPrayerTime =
@@ -66,7 +99,7 @@
             currentDate.getMonth(),
             currentDate.getDate() + 1
           ),
-          calculationMethod
+          calcualtionParameters
         ).timeForPrayer("fajr")
       : prayerTimes.timeForPrayer(upcomingPrayer);
 
@@ -81,6 +114,16 @@
       sendPrayerNotification(activePrayer);
       prayerNotifications[activePrayer] = true;
     }
+  }
+
+  const debouncedSaveConfiguration = debounce(() => {
+    if (config) {
+      saveConfiguration(config);
+    }
+  }, 500);
+
+  $: {
+    debouncedSaveConfiguration();
   }
 
   let updateTimeInterval;
@@ -180,6 +223,9 @@
         }
       }
     }, 500);
+    loadConfiguration().then((configuration) => {
+      config = configuration;
+    });
   });
 
   onDestroy(() => {
@@ -188,6 +234,32 @@
 </script>
 
 <main class="prayer-panel">
+  {#if config}
+    <div>
+      <label for="country-select">Country:</label>
+      <select
+        id="country-select"
+        bind:value={config.location.country}
+        on:change={handleLocationChange}
+      >
+        {#each countries as country}
+          <option value={country}>{country}</option>
+        {/each}
+      </select>
+    </div>
+    <div>
+      <label for="city-select">City:</label>
+      <select
+        id="city-select"
+        bind:value={config.location.city}
+        on:change={handleLocationChange}
+      >
+        {#each cities[config.location.country] as city}
+          <option value={city.name}>{city.name}</option>
+        {/each}
+      </select>
+    </div>
+  {/if}
   <div>
     <div class:highlight={upcomingPrayer === "fajr"} class="prayer">
       <span>Fajir:</span>
@@ -228,11 +300,6 @@
 </main>
 
 <style>
-  .highlight {
-    background-color: rgba(0, 255, 251, 0.5);
-    border-radius: 4px;
-    grid-column: 1 / -1; /* This will make it span all columns */
-  }
   body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -254,19 +321,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 4px 8px;
-    transition: background-color 0.3s ease; /* Transition effect */
+    transition: background-color 0.3s ease;
   }
 
   .prayer > :first-child {
-    justify-self: start; /* Aligns to the left of its cell */
+    justify-self: start;
   }
 
-  /* .prayer > :nth-child(2) {
-    justify-self: center;
-  } */
-
   .prayer > :last-child {
-    justify-self: end; /* Aligns to the right of its cell */
+    justify-self: end;
   }
 
   .prayer-time {
@@ -283,7 +346,6 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    overflow: hidden;
     transition: background-color 0.3s;
   }
 
@@ -299,6 +361,23 @@
     text-align: center;
   }
 
+  .highlight {
+    background-color: rgba(0, 255, 251, 0.5);
+    border-radius: 4px;
+    grid-column: 1 / -1;
+  }
+
+  select {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+    margin-right: 10px;
+  }
+
   /* Light theme styles (default) */
   body {
     background-color: #f4f4f4;
@@ -310,33 +389,33 @@
 
   /* Dark theme styles */
   @media (prefers-color-scheme: dark) {
+    select {
+      background-color: #333;
+      color: #ccc;
+      border: 1px solid #555;
+    }
+    select option {
+      background-color: #333;
+      color: #ccc;
+    }
     body {
       background-color: #1a1a1a;
     }
-
     .prayer-panel {
       background-color: #333;
     }
-
     .prayer-time,
     .countdown {
       color: #ccc;
     }
-
     .pause-button {
       background-color: #555;
     }
-
     .pause-button::before {
       color: #ccc;
     }
     .highlight {
-      background-color: rgba(
-        100,
-        200,
-        200,
-        0.5
-      ); /* Adjust as needed for the dark theme */
+      background-color: rgba(100, 200, 200, 0.5);
     }
   }
 </style>
