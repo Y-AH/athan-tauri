@@ -12,44 +12,17 @@
   import { configStore } from "./lib/store";
   import { slide } from "svelte/transition";
 
-  /**
-   * Flag to track if notification permission has been checked.
-   * @type {boolean}
-   */
+  const PAGE = {
+    Configurations: "Configurations",
+    PrayerTimes: "PrayerTimes",
+  };
+
   let permissionChecked = false;
-  /**
-   * Current day in formatted string.
-   * @type {string}
-   */
   let currentDayStr = formatDate();
+  let openPage = PAGE.PrayerTimes;
 
-  let openPage = "Configurations";
-
-  /**
-   * @type {import('./lib/Configuration').Configuration | null}
-   */
   let config = null;
-  /**
-   * @type {import('svelte/store').Unsubscriber}
-   */
   let configSub = null;
-
-  let selectedLocation = { country: "DefaultCountry", city: "DefaultCity" };
-
-  $: if (config && config.location) {
-    selectedLocation = { ...config.location };
-  }
-
-  function handleLocationChange() {
-    if (config) {
-      config.location = selectedLocation;
-    }
-  }
-
-  /**
-   * Tracks which prayer notifications have been sent.
-   * @type {Object.<string, boolean>}
-   */
   const prayerNotifications = {
     fajr: false,
     sunrise: false,
@@ -58,12 +31,8 @@
     maghrib: false,
     isha: false,
   };
-
-  /**
-   * Current date and time.
-   * @type {Date}
-   */
   let currentDate = new Date();
+  let updateTimeInterval;
 
   $: userCoordinates = new Coordinates(
     config?.location?.latitude ?? 0,
@@ -71,7 +40,6 @@
   );
   $: calcualtionParameters =
     CalculationMethod[config?.calculation_method ?? "Kuwait"]();
-
   $: prayerTimes = new PrayerTimes(
     userCoordinates,
     currentDate,
@@ -91,13 +59,6 @@
     }
   }
 
-  let updateTimeInterval;
-
-  /**
-   * Format a date into a string.
-   * @param {Date} [fromDate=new Date()] - Date to format.
-   * @returns {string} Formatted date string.
-   */
   function formatDate(fromDate = new Date()) {
     return `${fromDate.getDate().toString().padStart(2, "0")}/${(
       fromDate.getMonth() + 1
@@ -106,13 +67,6 @@
       .padStart(2, "0")}/${fromDate.getFullYear().toString()}`;
   }
 
-  /**
-   * Check if it's been a specified duration since the given prayer time.
-   * @param {Date} prayerTime - Time of the prayer.
-   * @param {number} amount - Amount of the duration.
-   * @param {("ms"|"s"|"m"|"h")} [unit="ms"] - Unit of the duration.
-   * @returns {boolean} Whether it's been the specified duration.
-   */
   function sinceLastPrayer(prayerTime, amount, unit = "ms") {
     const conversion = {
       ms: 1,
@@ -124,10 +78,6 @@
     return Date.now() - prayerTime.getTime() <= durationMs;
   }
 
-  /**
-   * Ensure the user has granted notification permissions.
-   * @returns {Promise<void>}
-   */
   async function ensureNotificationPermission() {
     if (!permissionChecked && !(await isPermissionGranted())) {
       permissionChecked = true;
@@ -135,11 +85,6 @@
     }
   }
 
-  /**
-   * Send a notification to the user for the specified prayer.
-   * @param {string} prayer - Name of the prayer.
-   * @returns {Promise<void>}
-   */
   async function sendPrayerNotification(prayer) {
     await sendNotification({
       title: `🕌 It's ${prayer} 🕋 time.`,
@@ -167,7 +112,7 @@
           prayerNotifications[prayer] = false;
         }
       }
-    }, 500);
+    }, 500); // This has to be less than one second since we are updating the UI with a countdown inside PrayerTimesPage
     loadConfiguration().then((configuration) => {
       configStore.set(configuration);
     });
@@ -177,24 +122,26 @@
   });
 
   function openConfiguration() {
-    openPage = "Configurations";
+    openPage = PAGE.Configurations;
   }
 
   function openPrayerTimes() {
-    openPage = "PrayerTimes";
+    openPage = PAGE.PrayerTimes;
   }
 </script>
 
 <div class="nav-buttons">
   <button
-    class:active={openPage === "Configurations"}
+    class:active={openPage === PAGE.Configurations}
     on:click={openConfiguration}>Configurations</button
   >
-  <button class:active={openPage === "PrayerTimes"} on:click={openPrayerTimes}
-    >Prayer Times</button
+  <button
+    class:active={openPage === PAGE.PrayerTimes}
+    on:click={openPrayerTimes}>Prayer Times</button
   >
 </div>
-{#if openPage === "Configurations"}
+
+{#if openPage === PAGE.Configurations}
   <div in:slide={{ duration: 500 }} out:slide={{ duration: 500 }}>
     <ConfigurationPage />
   </div>
@@ -210,6 +157,14 @@
 {/if}
 
 <style>
+  :root {
+    --highlight-color-light: rgba(0, 255, 251, 0.8);
+    --highlight-color-hover: rgba(0, 255, 251, 0.7);
+    --highlight-color-light-active: rgba(0, 255, 251, 0.9);
+    --highlight-color-dark-active: rgba(0, 255, 251, 0.7);
+    --highlight-color-dark-hover: rgba(0, 255, 251, 0.6);
+  }
+
   .nav-buttons {
     display: flex;
     flex-direction: row;
@@ -217,37 +172,43 @@
     align-items: center;
     margin-bottom: 8px;
     border-color: transparent;
+    font-family: inherit; /* Adopt the font family from the root */
+  }
+
+  .nav-buttons > button:focus {
+    outline: none;
   }
 
   .nav-buttons > button.active {
-    background-color: #646cff;
+    background-color: var(--highlight-color-light);
     color: #f4f4f4;
     border-color: transparent;
   }
 
   .nav-buttons > button:not(.active):hover {
-    background-color: #535bf2;
+    background-color: var(--highlight-color-hover);
+    border-color: transparent;
   }
 
   @media (prefers-color-scheme: light) {
     .nav-buttons > button.active {
-      background-color: #747bff;
+      background-color: var(--highlight-color-light-active);
       color: #213547;
     }
 
     .nav-buttons > button:not(.active):hover {
-      background-color: #626cd2;
+      background-color: var(--highlight-color-light-active);
     }
   }
 
   @media (prefers-color-scheme: dark) {
     .nav-buttons > button.active {
-      background-color: #535bf2;
+      background-color: var(--highlight-color-dark-active);
       color: #f4f4f4;
     }
 
     .nav-buttons > button:not(.active):hover {
-      background-color: #424bc1;
+      background-color: var(--highlight-color-dark-hover);
     }
   }
 </style>
