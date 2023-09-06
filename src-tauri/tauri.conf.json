@@ -11,10 +11,17 @@
     "version": "0.1.0"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
     "allowlist": {
       "all": false,
       "notification": {
         "all": true
+      },
+      "window": {
+        "hide": true
       },
       "fs": {
         "all": true,
@@ -74,10 +81,15 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
-        "resizable": true,
+        "height": 410,
+        "resizable": false,
+        "decorations": false,
+        "visible": false,
+        "theme": "Dark",
+        "titleBarStyle": "Transparent",
+        "skipTaskbar": true,
         "title": "adhan-app",
-        "width": 800
+        "width": 360
       }
     ]
   }

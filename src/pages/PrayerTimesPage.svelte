@@ -76,7 +76,7 @@
 
 <main class="panel">
     <div>
-        <div class:highlight={upcomingPrayer === "fajr"} class="prayer">
+        <div class:highlight={upcomingPrayer === "fajr" || upcomingPrayer === 'none'} class="prayer">
             <span>Fajir:</span>
             <span class="prayer-time"
                 >{formatTimeWithAMPM(prayerTimes.fajr)}</span
