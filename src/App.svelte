@@ -1,13 +1,18 @@
 <script>
-    import {CalculationMethod, Coordinates, PrayerTimes} from "adhan";
-    import {isPermissionGranted, requestPermission, sendNotification,} from "@tauri-apps/api/notification";
-    import {onDestroy, onMount} from "svelte";
-    import {loadConfiguration} from "./lib/ConfigurationService";
+    import { CalculationMethod, Coordinates, PrayerTimes } from "adhan";
+    import {
+        isPermissionGranted,
+        requestPermission,
+        sendNotification,
+    } from "@tauri-apps/api/notification";
+    import { onDestroy, onMount } from "svelte";
+    import { loadConfiguration } from "./lib/ConfigurationService";
     import PrayerTimesPage from "./pages/PrayerTimesPage.svelte";
     import ConfigurationPage from "./pages/ConfigurationPage.svelte";
-    import {configStore} from "./lib/store";
-    import {slide} from "svelte/transition";
-    import {appWindow} from "@tauri-apps/api/window";
+    import { configStore } from "./lib/store";
+    import { slide } from "svelte/transition";
+    import { appWindow } from "@tauri-apps/api/window";
+    import { t } from "./i18n/i18n";
 
     const PAGE = {
         Configurations: "Configurations",
@@ -88,8 +93,8 @@
      */
     async function sendPrayerNotification(prayer) {
         await sendNotification({
-            title: `🕌 It's ${prayer} 🕋 time.`,
-            body: "🚶‍♂️ Get up, 🛑 take a break, and 🙏 pray.",
+            title: $t("app.notificationTitle", { prayer: $t(`prayerTimesPage.prayerNames.${prayer}`) }),
+            body: $t("app.notificationBody"),
         });
     }
 
@@ -133,35 +138,34 @@
     function closeWindow() {
         appWindow.hide();
     }
-
 </script>
 
 {#if config}
     <button class="fixed-top-left" on:click={closeWindow}>X</button>
     <div class="nav-buttons">
         <button
-                class:active={openPage === PAGE.Configurations}
-                on:click={openConfiguration}>Configurations
-        </button
-        >
+            class:active={openPage === PAGE.Configurations}
+            on:click={openConfiguration}
+            >{$t("app.configurations")}
+        </button>
         <button
-                class:active={openPage === PAGE.PrayerTimes}
-                on:click={openPrayerTimes}>Prayer Times
-        </button
-        >
+            class:active={openPage === PAGE.PrayerTimes}
+            on:click={openPrayerTimes}
+            >{$t("app.prayerTimes")}
+        </button>
     </div>
 
     {#if openPage === PAGE.Configurations}
         <div in:slide={{ duration: 500 }} out:slide={{ duration: 500 }}>
-            <ConfigurationPage/>
+            <ConfigurationPage />
         </div>
     {:else if prayerTimes}
         <div in:slide={{ duration: 500 }} out:slide={{ duration: 500 }}>
             <PrayerTimesPage
-                    {currentDate}
-                    {prayerTimes}
-                    {calcualtionParameters}
-                    {userCoordinates}
+                {currentDate}
+                {prayerTimes}
+                {calcualtionParameters}
+                {userCoordinates}
             />
         </div>
     {/if}
