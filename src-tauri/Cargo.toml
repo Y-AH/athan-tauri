@@ -1,6 +1,6 @@
 [package]
-name = "Athan App"
-version = "1.1.0"
+name = "app"
+version = "1.1.1"
 description = "An athan reminder app."
 authors = ["yousef.alabdullah"]
 license = "MIT"
