@@ -4,7 +4,7 @@
 use tauri::{CustomMenuItem, LogicalSize, Manager, PhysicalPosition, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 const WINDOW_WIDTH: u32 = 360;
-const WINDOW_HEIGHT: u32 = 410;
+const WINDOW_HEIGHT: u32 = 470;
 const QUIT_ITEM_ID: &str = "quit";
 
 /// Entry point for the application.

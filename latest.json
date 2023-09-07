@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "notes": "See the assets to download this version and install.",
+  "pub_date": "2023-09-07T18:00:46.862Z",
+  "platforms": {
+    "darwin-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUYzIxTXNDaEhZbWlPY0psTFFXNjZFL3BoSWF6Mk5yUlhjYnorSFAxRnZCVnU2WEU3M2phcThlZGt2N0Jta1ZINzVUbFJ4TzM2cCtMbjFOTlZBU2xHZFplUVgva3I3dXc4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk0MTA5MTgwCWZpbGU6YXRoYW4tYXBwLmFwcC50YXIuZ3oKams4WnpwckQwWU9BMTRxcjlwQTlHU1ZMZkxKa045VVVNbVhCUTFwYStHd2xkc0dqTGJjT2lLSUR1U3N1dDVURTdiZTdNL01aSHg3RDBmS2xpOWl3REE9PQo=",
+      "url": "https://github.com/Y-AH/athan-tauri/releases/download/app-v1.0.0/athan-app_x64.app.tar.gz"
+    },
+    "linux-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUYzIxTXNDaEhZbWxtNWpZYjhtRWZraTNTUDZ1WFd2b0JFV0hFUlY0clVqMnhwMUVCL1pRZzlxZmI0Zkpldk8zaHUveXQxeTRiUmtMSjhYTzRmck4xMW5WcHYyTWxMWlF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk0MTA5NTA3CWZpbGU6YXRoYW4tYXBwXzEuMC4wX2FtZDY0LkFwcEltYWdlLnRhci5negp4bFdOdjJ0UU1NRjVVSXZ0Snd6dWwrUCtCaEZDTW85VDBVZEd0NUR2STY3V2tXNExML1BTMUVUOVhBS1hLM3BpRHpzb0d3TlVnZFZ4ZFRPUkZOM09EUT09Cg==",
+      "url": "https://github.com/Y-AH/athan-tauri/releases/download/app-v1.0.0/athan-app_1.0.0_amd64.AppImage.tar.gz"
+    },
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUYzIxTXNDaEhZbXUzTFZ6TWxaZVBPNXRiRzBvaHJ3cXM4YzV4SE1NV0lxVk1CTU1jcWFjdytLeTh1cnluVXVwL3RqL0IyenpLNGRBWlRxNXRmTjZ5d2M2KzdBY0U1UmdVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNjk0MTA5NjM5CWZpbGU6YXRoYW4tYXBwXzEuMC4wX3g2NF9lbi1VUy5tc2kuemlwCllXUU9zMFpydVN4NW5oNzJaaUQxYUpJckw4RnNXTFNKbTEzeDBVWDVrVkEwamNZclJoVFk0K1hwcFB2bm5aVjNQYnVQMlowcEtOQ21nVFhtbkFYNUJnPT0K",
+      "url": "https://github.com/Y-AH/athan-tauri/releases/download/app-v1.0.0/athan-app_1.0.0_x64_en-US.msi.zip"
+    }
+  }
+}

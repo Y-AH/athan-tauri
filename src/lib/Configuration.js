@@ -5,6 +5,7 @@ import { cities } from "./cities";
 const DEFAULTS = Object.freeze({
     version: '0.0.0',
     title: 'Athan Reminder',
+    language: 'en',
     calculation_method: "Kuwait",
     location: {
         country: "Kuwait",
@@ -46,11 +47,11 @@ export class Configuration {
 
     constructor(...args) {
         const isObjectArg = args.length === 1 && typeof args[0] === 'object';
-        const [version, title, calculation_method, location, prayer_offset] = isObjectArg
-            ? [args[0].version, args[0].title, args[0].calculation_method, args[0].location, args[0].prayer_offset]
+        const [version, title, language, calculation_method, location, prayer_offset] = isObjectArg
+            ? [args[0].version, args[0].title, args[0].language, args[0].calculation_method, args[0].location, args[0].prayer_offset]
             : args;
 
-        this.init(version, title, calculation_method, location, prayer_offset);
+        this.init(version, title, language, calculation_method, location, prayer_offset);
     }
 
 
@@ -73,12 +74,14 @@ export class Configuration {
     init(
         version = DEFAULTS.version,
         title = DEFAULTS.title,
+        language = DEFAULTS.language,
         calculation_method = DEFAULTS.calculation_method,
         location = {},
         prayer_offset = {}
     ) {
         this.version = version;
         this.title = title;
+        this.language = language;
         this.calculation_method = calculation_method ?? DEFAULTS.calculation_method;
         this.location = location;  // This uses the setter method
         this.prayer_offset = {
@@ -95,6 +98,7 @@ export class Configuration {
         return {
             version: this.version,
             title: this.title,
+            language: this.language,
             calculation_method: this.calculation_method,
             location: { ...this.location },
             prayer_offset: { ...this.prayer_offset },

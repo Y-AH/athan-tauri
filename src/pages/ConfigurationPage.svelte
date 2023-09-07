@@ -6,6 +6,7 @@
     import { onDestroy, onMount } from "svelte";
     import { fade } from "svelte/transition";
     import { CalculationMethodList } from "../lib/Configuration";
+    import { locales, t, translate } from "../i18n/i18n";
 
     let config = null;
     let configUnsub = null;
@@ -68,12 +69,31 @@
             console.error(e);
         }
     }
+
+    function handleLanguageChange() {
+        // Then update the store if needed.
+        updateStore(config);
+    }
 </script>
 
 <main class="panel">
     {#if config}
         <div>
-            <label for="country-select">Country:</label>
+            <label for="language-select">{$t("configPage.language")}:</label>
+            <select
+                id="language-select"
+                bind:value={config.language}
+                on:change={handleLanguageChange}
+            >
+                {#each locales as locale}
+                    <option value={locale}
+                        >{translate(locale, "name", {})}</option
+                    >
+                {/each}
+            </select>
+        </div>
+        <div>
+            <label for="country-select">{$t("configPage.country")}:</label>
             <select
                 id="country-select"
                 bind:value={config.location.country}
@@ -85,7 +105,7 @@
             </select>
         </div>
         <div>
-            <label for="city-select">City:</label>
+            <label for="city-select">{$t("configPage.city")}:</label>
             <select
                 id="city-select"
                 bind:value={config.location.city}
@@ -97,7 +117,9 @@
             </select>
         </div>
         <div>
-            <label for="calculation-method-select">Calculation Method:</label>
+            <label for="calculation-method-select"
+                >{$t("configPage.calculationMethod")}:</label
+            >
             <select
                 id="calculation-method-select"
                 bind:value={config.calculation_method}
@@ -112,27 +134,35 @@
         </div>
     {:else}
         <div>
-            <label for="country-select">Country:</label>
+            <label for="language-select">{$t("configPage.language")}:</label>
+            <select id="language-select" />
+        </div>
+        <div>
+            <label for="country-select">{$t("configPage.country")}:</label>
             <select id="country-select" />
         </div>
         <div>
-            <label for="city-select">City:</label>
+            <label for="city-select">{$t("configPage.city")}:</label>
             <select id="city-select" />
         </div>
         <div>
-            <label for="calculation-method-select">Calculation Method:</label>
+            <label for="calculation-method-select"
+                >{$t("configPage.calculationMethod")}:</label
+            >
             <select id="calculation-method-select" />
         </div>
     {/if}
 
     <div>
-        <button on:click={saveConfigAndNotify}>Save</button>
+        <button on:click={saveConfigAndNotify}
+            >{$t("configPage.saveButton")}</button
+        >
     </div>
 
     <!-- Snackbar Component -->
     {#if showSnackbar}
         <div class="snackbar" transition:fade={{ duration: 500 }}>
-            Configurations Saved!
+            {$t("configPage.snackbarText")}
         </div>
     {/if}
 </main>
