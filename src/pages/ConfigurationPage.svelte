@@ -6,7 +6,7 @@
     import { onDestroy, onMount } from "svelte";
     import { fade } from "svelte/transition";
     import { CalculationMethodList } from "../lib/Configuration";
-    import { locales, t, translate } from "../i18n/i18n";
+    import { locales, t, translate, tCountry } from "../i18n/i18n";
 
     let config = null;
     let configUnsub = null;
@@ -100,7 +100,7 @@
                 on:change={handleLocationChange}
             >
                 {#each countries as country}
-                    <option value={country}>{country}</option>
+                    <option value={country}>{$tCountry(country)}</option>
                 {/each}
             </select>
         </div>
@@ -127,7 +127,7 @@
             >
                 {#each CalculationMethodList as calculationMethod}
                     <option value={calculationMethod}
-                        >{calculationMethod}</option
+                        >{$t(`configPage.calculationMethod.${calculationMethod}`)}</option
                     >
                 {/each}
             </select>

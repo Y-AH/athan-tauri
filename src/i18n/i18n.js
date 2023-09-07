@@ -1,6 +1,9 @@
 import { derived, writable } from "svelte/store";
 import translations from "./translations";
 import { configStore } from "../lib/store";
+import { countriesToISO } from "../lib/countries";
+import { translateCountry } from "./translations";
+
 
 /**
  * @type {import("./translations").Locale}
@@ -52,11 +55,13 @@ export function translate(currentLocale, key, vars) {
  *
  * @type {import("svelte/store").Readable<(key: keyof import("./translations").Translation, vars?: { [key: string]: string }) => string>}
  */
-export const t = derived(locale, /** @param {import("./translations").Locale} $locale */ ($locale) => 
-    /** 
-     * @param {keyof import("./translations").Translation} key 
-     * @param {{ [key: string]: string }} [vars={}] 
-     * @returns {string} 
-     */
-    (key, vars = {}) => translate($locale, key, vars)
+export const t = derived(locale, /** @param {import("./translations").Locale} $locale */($locale) =>
+  /** 
+   * @param {keyof import("./translations").Translation} key 
+   * @param {{ [key: string]: string }} [vars={}] 
+   * @returns {string} 
+   */
+  (key, vars = {}) => translate($locale, key, vars)
 );
+
+export const tCountry = derived(locale, $locale => (country) => translateCountry(country, $locale));
