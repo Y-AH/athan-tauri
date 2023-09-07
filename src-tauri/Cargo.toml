@@ -1,10 +1,10 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+name = "Athan App"
+version = "1.1.0"
+description = "An athan reminder app."
+authors = ["yousef.alabdullah"]
+license = "MIT"
+repository = "https://github.com/Y-AH/athan-tauri.git"
 default-run = "app"
 edition = "2021"
 rust-version = "1.60"
