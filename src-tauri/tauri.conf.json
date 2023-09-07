@@ -7,8 +7,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "adhan-app",
-    "version": "0.1.0"
+    "productName": "athan-app",
+    "version": "1.0.0"
   },
   "tauri": {
     "systemTray": {
@@ -63,6 +63,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
+      "appimage": {
+        "bundleMediaFramework": true
+      },
       "resources": [],
       "shortDescription": "",
       "targets": "all",
@@ -76,7 +79,14 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "dialog": true,
+      "endpoints": ["https://github.com/Y-AH/athan-tauri/blob/master/latest.json"],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlBRDgxMTBBMkM1M0RCREMKUldUYzIxTXNDaEhZbWd3RlltNDlDUEVDVnBZRXRFRWtqMDN1MXVyYk82WUFQTHVRR3hWTGZuTmoK",
+      "windows": {
+        "installMode": "passive",
+        "installerArgs": []
+      }
     },
     "windows": [
       {
